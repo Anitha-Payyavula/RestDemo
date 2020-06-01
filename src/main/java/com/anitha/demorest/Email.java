@@ -28,6 +28,13 @@ public class Email {
 		this.subject = subject;
 		this.body = body;
 	}
+	public Email() {
+		
+	}
+	@Override
+	public String toString() {
+		return "Email [to=" + to + ", subject=" + subject + ", body=" + body + "]";
+	}
 	
 
 }
