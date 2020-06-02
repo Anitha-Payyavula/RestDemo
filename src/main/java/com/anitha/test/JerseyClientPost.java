@@ -1,6 +1,8 @@
-package com.anitha.demorest;
+package com.anitha.test;
 
 
+
+import org.json.simple.JSONObject;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -17,14 +19,17 @@ public class JerseyClientPost {
 			WebResource webResource = client
 					.resource("http://localhost:8087/demorest/webapi/restmethod/postemail");
 
-			String input = "{\r\n" + 
-					"\"to\": \"anitha.payyavula1997@gmail.com\",\r\n" + 
-					"\"subject\": \"Hii\",\r\n" + 
-					"\"body\": \"Helooooo....\"\r\n" + 
-					"}";
+			
+			JSONObject obj = new JSONObject();
 
+		      obj.put("to", "anitha.payyavula1997@gmail.com");
+		      obj.put("subject", "Hii");
+		      obj.put("body", "Hello...");
+		     
+
+					
 			ClientResponse response = webResource.type("application/json")
-					.post(ClientResponse.class, input);
+					.post(ClientResponse.class, obj);
 
 			if (response.getStatus() != 201) {
 				throw new RuntimeException("Failed : HTTP error code : "
