@@ -13,6 +13,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import com.anitha.model.Email;
+
 public class SendEmailService {
 	public List<MimeMessage> formMsg(Email[] emails,Session session,InternetAddress addressFrom) throws MessagingException {
 		List<MimeMessage> list=new ArrayList<MimeMessage>();  
@@ -27,15 +29,8 @@ public class SendEmailService {
 		
 		return list;
 	}
-	public  void sent(Email[] emails) {
+	public  void sent(Email email,final String userId,final String pwd) {
 		
-	    Scanner sc = new Scanner(System.in); 
-        System.out.println("Enter your email address:");
-        final String from = sc.nextLine(); 
-        System.out.println("Enter your password: ");
-        final String password = sc.nextLine(); 
-
-
 	    Properties props = new Properties();  
 	    props.setProperty("mail.transport.protocol", "smtp");     
 	    props.setProperty("mail.host", "smtp.gmail.com");  
@@ -48,22 +43,25 @@ public class SendEmailService {
 	    Session session = Session.getDefaultInstance(props,  
 	    new javax.mail.Authenticator() {
 	       protected PasswordAuthentication getPasswordAuthentication() {  
-	       return new PasswordAuthentication(from,password);  
+	       return new PasswordAuthentication(userId,pwd);  
 	   }  
 	   });
 	    try {
 	   //session.setDebug(true);  
 	   Transport transport = session.getTransport();  
-	   InternetAddress addressFrom = new InternetAddress(from); 
+	   InternetAddress addressFrom = new InternetAddress(userId); 
 	   
-	   List<MimeMessage> list=new ArrayList<MimeMessage>();
-	   list=formMsg(emails,session,addressFrom);
+	    MimeMessage message = new MimeMessage(session);  
+		message.setSender(addressFrom);
+		message.setSubject(email.getSubject());  
+		message.setContent(email.getBody(), "text/plain"); 
+		message.addRecipient(Message.RecipientType.TO, new InternetAddress(email.getTo()));
 	   
 	   transport.connect();  
-	   for(MimeMessage msg:list) {
-		   Transport.send(msg);
+	   
+		   Transport.send(message);
 		   
-	   }
+	   
 	   transport.close();
 	    }
 	    catch(Exception e) {

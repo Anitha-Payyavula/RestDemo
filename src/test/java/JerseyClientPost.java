@@ -1,6 +1,11 @@
-package com.anitha.test;
 
 
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.mail.internet.MimeMessage;
 
 import org.json.simple.JSONObject;
 
@@ -18,18 +23,27 @@ public class JerseyClientPost {
 
 			WebResource webResource = client
 					.resource("http://localhost:8087/demorest/webapi/restmethod/postemail");
-
 			
-			JSONObject obj = new JSONObject();
+			JSONObject json = new JSONObject();
+			
+			JSONObject email = new JSONObject();
 
-		      obj.put("to", "anitha.payyavula1997@gmail.com");
-		      obj.put("subject", "Hii");
-		      obj.put("body", "Hello...");
+			email.put("to", "anitha.payyavula1997@gmail.com");
+			email.put("subject", "Hii");
+			email.put("body", "Hello...");
+			
+			JSONObject sender = new JSONObject();
+			sender.put("userId", "anitha.payyavula1997@gmail.com");
+			sender.put("password", "Hii");
+		      
+			json.put("email", email);
+			json.put("sender", sender);
+			
 		     
 
-					
+			for(int i=0;i<5;i++) {
 			ClientResponse response = webResource.type("application/json")
-					.post(ClientResponse.class, obj);
+					.post(ClientResponse.class, json);
 
 			if (response.getStatus() != 201) {
 				throw new RuntimeException("Failed : HTTP error code : "
@@ -39,6 +53,7 @@ public class JerseyClientPost {
 			System.out.println("Output from Server .... \n");
 			String output = response.getEntity(String.class);
 			System.out.println(output);
+			}
 
 		} catch (Exception e) {
 

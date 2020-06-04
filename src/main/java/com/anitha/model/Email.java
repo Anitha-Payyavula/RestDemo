@@ -1,12 +1,22 @@
-package com.anitha.demorest;
+package com.anitha.model;
 
 public class Email {
+	int id;
 	String to;
 	String subject;
 	String body;
 	public String getTo() {
 		return to;
 	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public void setTo(String to) {
 		this.to = to;
 	}
@@ -22,8 +32,9 @@ public class Email {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	public Email(String to, String subject, String body) {
+	public Email(int id,String to, String subject, String body) {
 		super();
+		this.id=id;
 		this.to = to;
 		this.subject = subject;
 		this.body = body;
@@ -33,7 +44,7 @@ public class Email {
 	}
 	@Override
 	public String toString() {
-		return "Email [to=" + to + ", subject=" + subject + ", body=" + body + "]";
+		return "Email [id="+ id +", to=" + to + ", subject=" + subject + ", body=" + body + "]";
 	}
 	
 

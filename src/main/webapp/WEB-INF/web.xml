@@ -7,7 +7,7 @@
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>com.anitha.demorest</param-value>
+            <param-value>com.anitha</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -15,12 +15,5 @@
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/webapi/*</url-pattern>
     </servlet-mapping>
-    <servlet> 
-		<servlet-name>LifeCycleServlet</servlet-name> 
-		<servlet-class>com.anitha.demorest.Servlet1</servlet-class> 
-	</servlet> 
-	<servlet-mapping> 
-		<servlet-name>LifeCycleServlet</servlet-name> 
-		<url-pattern>/demo</url-pattern> 
-	</servlet-mapping> 
+   
 </web-app>
