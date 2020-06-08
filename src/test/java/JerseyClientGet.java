@@ -14,7 +14,7 @@ public class JerseyClientGet {
 			Client client = Client.create();
 
 			WebResource webResource = client
-					.resource("http://localhost:8087/demorest/webapi/restmethod/getemail");
+					.resource("http://localhost:8087/demorest/webapi/restmethod/getemail/15");
 
 			ClientResponse response = webResource.accept("application/json")
 					.get(ClientResponse.class);

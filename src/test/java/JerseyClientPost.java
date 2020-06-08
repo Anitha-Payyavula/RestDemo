@@ -28,7 +28,7 @@ public class JerseyClientPost {
 			
 			JSONObject email = new JSONObject();
 
-			email.put("to", "anitha.payyavula1997@gmail.com");
+			email.put("to_address", "anitha.payyavula1997@gmail.com");
 			email.put("subject", "Hii");
 			email.put("body", "Hello...");
 			

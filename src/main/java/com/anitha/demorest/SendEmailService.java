@@ -16,19 +16,7 @@ import javax.mail.internet.MimeMessage;
 import com.anitha.model.Email;
 
 public class SendEmailService {
-	public List<MimeMessage> formMsg(Email[] emails,Session session,InternetAddress addressFrom) throws MessagingException {
-		List<MimeMessage> list=new ArrayList<MimeMessage>();  
-		for(int i=0;i<emails.length;i++) {
-			MimeMessage message = new MimeMessage(session);  
-			message.setSender(addressFrom);
-			message.setSubject(emails[i].getSubject());  
-			message.setContent(emails[i].getBody(), "text/plain"); 
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(emails[i].getTo()));
-			list.add(message);
-		}
-		
-		return list;
-	}
+	
 	public  void sent(Email email,final String userId,final String pwd) {
 		
 	    Properties props = new Properties();  
@@ -55,7 +43,7 @@ public class SendEmailService {
 		message.setSender(addressFrom);
 		message.setSubject(email.getSubject());  
 		message.setContent(email.getBody(), "text/plain"); 
-		message.addRecipient(Message.RecipientType.TO, new InternetAddress(email.getTo()));
+		message.addRecipient(Message.RecipientType.TO, new InternetAddress(email.getTo_address()));
 	   
 	   transport.connect();  
 	   

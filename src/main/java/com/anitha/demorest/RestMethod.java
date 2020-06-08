@@ -18,20 +18,27 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.anitha.DAO.Email_DAO;
 import com.anitha.exception.DataNotFoundException;
 import com.anitha.exception.ServiceException;
 import com.anitha.model.Email;
 import com.anitha.model.JsonObj;
 import com.anitha.model.Sender;
+import com.anitha.util.ConnectionHelper;
 
 @Path("restmethod")
 public class RestMethod {
+	Email_DAO e=new Email_DAO();
 	@GET
 	@Path("/getemail/{id}")
-	//@Produces(MediaType.APPLICATION_JSON)
-	public Response getEmail(@PathParam("id")String id) throws ServiceException 
+	@Produces(MediaType.APPLICATION_JSON)
+	public Email getEmail(@PathParam("id")int id) throws ServiceException 
 	{
-		throw new ServiceException("email id Not Found : " + id, Status.NOT_FOUND.toString());
+		
+		Email email=e.findById(id);
+		if(email==null)
+			throw new ServiceException("email id Not Found : " + id, Status.NOT_FOUND.toString());
+		return email;
 		//return Response.status(200).entity(msg).build();
 	}
 	
@@ -39,7 +46,7 @@ public class RestMethod {
 	@POST
 	@Path("/post")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void createEmail1(Sender sender) throws ServiceException 
+	public void example(Sender sender) throws ServiceException 
 	{
 		if(sender.getUserId().isEmpty() || sender.getUserId()==null) {
 			throw new ServiceException("id should not be empty or null", Status.BAD_REQUEST.toString());
@@ -51,8 +58,9 @@ public class RestMethod {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createEmail(JsonObj json) 
 	{
+		int id=e.create(json.getEmail());
 
-		String result = "email saved : " + json.getEmail();
+		String result = "email saved with id: " +id;
 		SendEmailService service=new SendEmailService();
 		service.sent(json.getEmail(),json.getSender().getUserId(),json.getSender().getPassword());
 		
