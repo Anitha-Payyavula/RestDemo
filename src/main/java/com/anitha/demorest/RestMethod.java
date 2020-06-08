@@ -3,6 +3,7 @@ package com.anitha.demorest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,17 @@ public class RestMethod {
 			throw new ServiceException("email id Not Found : " + id, Status.NOT_FOUND.toString());
 		return email;
 		//return Response.status(200).entity(msg).build();
+	}
+	
+	@GET
+	@Path("/getallemails")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Email> getEmail() throws ServiceException 
+	{
+		List<Email> list = new ArrayList<Email>();
+		list=e.findAll();
+		
+		return list;
 	}
 	
 	
