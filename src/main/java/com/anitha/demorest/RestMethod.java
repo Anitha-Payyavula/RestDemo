@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -25,6 +26,7 @@ import com.anitha.exception.ServiceException;
 import com.anitha.model.Email;
 import com.anitha.model.JsonObj;
 import com.anitha.model.Sender;
+import com.anitha.util.Authentication;
 import com.anitha.util.ConnectionHelper;
 
 @Path("restmethod")
@@ -33,9 +35,13 @@ public class RestMethod {
 	@GET
 	@Path("/getemail/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Email getEmail(@PathParam("id")int id) throws ServiceException 
+	public Object getEmail(@PathParam("id")int id,@HeaderParam("authorization") 
+	String authString) throws ServiceException 
 	{
-		
+		if(!Authentication.isUserAuthenticated(authString)) {
+			return "{\"error\":\"User not authenticated\"}";
+			
+		}
 		Email email=e.findById(id);
 		if(email==null)
 			throw new ServiceException("email id Not Found : " + id, Status.NOT_FOUND.toString());
@@ -46,8 +52,12 @@ public class RestMethod {
 	@GET
 	@Path("/getallemails")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Email> getEmail() throws ServiceException 
+	public List<Email> getEmail(@HeaderParam("authorization") String authString) throws ServiceException 
 	{
+		if(!Authentication.isUserAuthenticated(authString)) {
+			throw new ServiceException("user is not authorized : ", Status.UNAUTHORIZED.toString());
+			
+		}
 		List<Email> list = new ArrayList<Email>();
 		list=e.findAll();
 		
@@ -71,11 +81,10 @@ public class RestMethod {
 	public Response createEmail(JsonObj json) 
 	{
 		int id=e.create(json.getEmail());
-
 		String result = "email saved with id: " +id;
 		SendEmailService service=new SendEmailService();
-		service.sent(json.getEmail(),json.getSender().getUserId(),json.getSender().getPassword());
-		
+		boolean flag=service.sent(json.getEmail(),json.getSender().getUserId(),json.getSender().getPassword());
+		e.update(id,flag);
 		return Response.status(201).entity(result).build();
 	}
 	

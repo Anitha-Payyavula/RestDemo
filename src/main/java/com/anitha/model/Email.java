@@ -1,6 +1,9 @@
 package com.anitha.model;
 
-public class Email {
+import java.io.Serializable;
+
+public class Email implements Serializable{
+	private static final long serialVersionUID = 1;
 	int email_id;
 	String to_address;
 	String subject;
@@ -43,6 +46,46 @@ public class Email {
 		
 	}
 	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((body == null) ? 0 : body.hashCode());
+		result = prime * result + email_id;
+		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
+		result = prime * result + ((to_address == null) ? 0 : to_address.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Email other = (Email) obj;
+		if (body == null) {
+			if (other.body != null)
+				return false;
+		} else if (!body.equals(other.body))
+			return false;
+		if (email_id != other.email_id)
+			return false;
+		if (subject == null) {
+			if (other.subject != null)
+				return false;
+		} else if (!subject.equals(other.subject))
+			return false;
+		if (to_address == null) {
+			if (other.to_address != null)
+				return false;
+		} else if (!to_address.equals(other.to_address))
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {

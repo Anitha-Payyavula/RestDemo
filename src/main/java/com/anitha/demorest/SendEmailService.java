@@ -17,7 +17,7 @@ import com.anitha.model.Email;
 
 public class SendEmailService {
 	
-	public  void sent(Email email,final String userId,final String pwd) {
+	public  boolean sent(Email email,final String userId,final String pwd) {
 		
 	    Properties props = new Properties();  
 	    props.setProperty("mail.transport.protocol", "smtp");     
@@ -47,13 +47,14 @@ public class SendEmailService {
 	   
 	   transport.connect();  
 	   
-		   Transport.send(message);
-		   
-	   
+	   Transport.send(message);
 	   transport.close();
+	   return true;
+		   
 	    }
 	    catch(Exception e) {
 	    	System.out.println(e);
+	    	return false;
 	    }
 	   
 	}

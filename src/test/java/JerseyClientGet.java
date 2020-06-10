@@ -6,18 +6,29 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
+import sun.misc.BASE64Encoder;
+
 public class JerseyClientGet {
 
 	public static void main(String[] args) {
 		try {
+			String url="http://localhost:8087/demorest/webapi/restmethod/getemail/25";
+			String name = "anitha";
+	        String password = "anitha";
+	        String authString = name + ":" + password;
+	        String authStringEnc = new BASE64Encoder().encode(authString.getBytes());
+	        System.out.println("Base64 encoded auth string: " + authStringEnc);
+	        Client restClient = Client.create();
+	        WebResource webResource = restClient.resource(url);
 
-			Client client = Client.create();
+			/*Client client = Client.create();
 
 			WebResource webResource = client
 					.resource("http://localhost:8087/demorest/webapi/restmethod/getemail/15");
-
-			ClientResponse response = webResource.accept("application/json")
-					.get(ClientResponse.class);
+*/
+	        ClientResponse response = webResource.accept("application/json")
+                    .header("Authorization", "Basic " + authStringEnc)
+                    .get(ClientResponse.class);
 
 			if (response.getStatus() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : "
