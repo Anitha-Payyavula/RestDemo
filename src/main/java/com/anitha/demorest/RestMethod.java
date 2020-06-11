@@ -33,16 +33,37 @@ import com.anitha.util.ConnectionHelper;
 public class RestMethod {
 	Email_DAO e=new Email_DAO();
 	@GET
+	@Path("/getemails")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Email> getEmailPage(@HeaderParam("authorization") String authString,
+			@QueryParam("limit") int limit,
+			@QueryParam("offset") int offset) throws ServiceException 
+	{
+		String[] auth=Authentication.isUserAuthenticated(authString);
+		if(!e.findByUserId(auth[0],auth[1])) {
+			throw new ServiceException("user is not authorized : ", Status.UNAUTHORIZED.toString());
+			
+		}
+		List<Email> list = new ArrayList<Email>();
+		list=e.getAllEmailsPaginated(limit,offset);
+		
+		return list;
+	}
+	
+	
+	
+	@GET
 	@Path("/getemail/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Object getEmail(@PathParam("id")int id,@HeaderParam("authorization") 
 	String authString) throws ServiceException 
 	{
-		if(!Authentication.isUserAuthenticated(authString)) {
+		String[] list=Authentication.isUserAuthenticated(authString);
+		if(!e.findByUserId(list[0],list[1])) {
 			return "{\"error\":\"User not authenticated\"}";
 			
 		}
-		Email email=e.findById(id);
+		Email email=e.findById(id,list[0]);
 		if(email==null)
 			throw new ServiceException("email id Not Found : " + id, Status.NOT_FOUND.toString());
 		return email;
@@ -54,12 +75,13 @@ public class RestMethod {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Email> getEmail(@HeaderParam("authorization") String authString) throws ServiceException 
 	{
-		if(!Authentication.isUserAuthenticated(authString)) {
+		String[] auth=Authentication.isUserAuthenticated(authString);
+		if(!e.findByUserId(auth[0],auth[1])) {
 			throw new ServiceException("user is not authorized : ", Status.UNAUTHORIZED.toString());
 			
 		}
 		List<Email> list = new ArrayList<Email>();
-		list=e.findAll();
+		list=e.findAll(auth[0]);
 		
 		return list;
 	}
@@ -73,6 +95,7 @@ public class RestMethod {
 		if(sender.getUserId().isEmpty() || sender.getUserId()==null) {
 			throw new ServiceException("id should not be empty or null", Status.BAD_REQUEST.toString());
 		}
+		e.saveUser(sender);
 		
 	}
 	@POST

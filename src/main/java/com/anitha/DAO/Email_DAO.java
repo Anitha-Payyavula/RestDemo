@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import com.anitha.model.Email;
+import com.anitha.model.Sender;
 import com.anitha.util.ConnectionHelper;
 import com.anitha.util.RedisCache;
 
@@ -21,22 +22,24 @@ public class Email_DAO {
 	ConnectionHelper conHelper=new ConnectionHelper();
 	RMapCache<Integer, Email> map=RedisCache.redisMap();
 	
-	public List<Email> findAll() {
+	public List<Email> findAll(String auth) {
 		
         List<Email> list = new ArrayList<Email>();
         Connection connection = null;
-    	String sql = "select * from email";
+    	String sql = "select * from email where userid=? ";
     	ConnectionHelper con =new ConnectionHelper();
         
         try {
         	
         	connection = conHelper.connectToPostgres();
-            Statement s = connection.createStatement();
-            s.setFetchSize(20);
-            ResultSet rs = s.executeQuery(sql);
-           // rs.setFetchSize(10);
+        	PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, auth);
+ 
+            ps.setFetchSize(20);
+            ResultSet rs = ps.executeQuery(sql);
+            Email email=new Email();
             while (rs.next()) {
-            	Email email=processRow(rs);
+            	email=processRow(rs);
             	map.put(email.getEmail_id(), email);
                 list.add(email);
             }
@@ -48,17 +51,18 @@ public class Email_DAO {
 		}
         return list;
     }
-	public Email findById(int id) {
+	public Email findById(int id,String userId) {
 		if(map.get(id)!=null) {
 			return map.get(id);
 		}
-    	String sql = "SELECT * from email where email_id= ? ";
+    	String sql = "SELECT * from email where email_id= ? and userid=? ";
     	Email email = null;
         Connection connection = null;
         try {
         	connection = conHelper.connectToPostgres();
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
+            ps.setString(2, userId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 email = processRow(rs);
@@ -101,6 +105,32 @@ public class Email_DAO {
          return id;
 
     }
+    public void saveUser(Sender sender) {
+   	 String query = "INSERT INTO sender(userid,password) VALUES(?, ?) ";
+   	 Connection connection=null;
+   	 int id =0;
+        try {
+       	 
+       	 connection=conHelper.connectToPostgres();
+        	 PreparedStatement pst = connection.prepareStatement(query);
+            pst.setString(1,sender.getUserId());
+            pst.setString(2, sender.getPassword());
+            pst.executeUpdate();
+            
+            ResultSet rs = pst.getGeneratedKeys();
+            rs.next();
+           
+
+        } catch (SQLException ex) {
+
+           System.out.println(ex);
+        }
+        catch(Exception e1) {
+        	System.out.println(e1);
+        }
+
+   }
+
     public boolean remove(int id) {
         Connection c = null;
         try {
@@ -170,6 +200,29 @@ public class Email_DAO {
         return false;
         
     }
+	public List<Email> getAllEmailsPaginated(int limit, int offset) {
+		// TODO Auto-generated method stub
+		String sql = "select * from email order by created_at limit "+ limit +" offset "+ offset;
+    	Email email = null;
+        Connection connection = null;
+        List<Email> list=new ArrayList<>();
+        try {
+        	connection = conHelper.connectToPostgres();
+            Statement ps=connection.createStatement();
+            ResultSet rs = ps.executeQuery(sql);
+            if (rs.next()) {
+            	email=processRow(rs);
+				list.add(email);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+		} finally {
+			conHelper.close();
+		}
+        return list;
+        
+	}
 
 	
     

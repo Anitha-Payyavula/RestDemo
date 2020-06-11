@@ -6,7 +6,7 @@ import com.anitha.DAO.Email_DAO;
 
 import sun.misc.BASE64Decoder;
 public class Authentication {
-	public static boolean isUserAuthenticated(String authString){
+	public static String[] isUserAuthenticated(String authString){
         
         String decodedAuth = "";
         // Header is in the format "Basic 5tyc0uiDat4"
@@ -23,8 +23,7 @@ public class Authentication {
         }
         decodedAuth = new String(bytes);
         String[] list=decodedAuth.split(":");
-        Email_DAO e=new Email_DAO();
-        return e.findByUserId(list[0],list[1]);
+        return list;
          
          
     }
