@@ -1,9 +1,15 @@
 package com.anitha.util;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+
+import com.anitha.demorest.SendEmailService;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
  
 public class ConnectionHelper 
 {
@@ -12,14 +18,19 @@ public class ConnectionHelper
 		
 
 		try {
-			Class.forName("org.postgresql.Driver");
-			String url = "jdbc:postgresql://localhost:5432/postgres";
+			String decryptedPwd = Authentication.decrypt(DbConnectionDetails.pwd);
+			Class.forName(DbConnectionDetails.driver);
+			String url = DbConnectionDetails.url;
 			Properties props = new Properties();
-			props.setProperty("user","postgres");
-			props.setProperty("password","anitha");
+			props.setProperty("user",DbConnectionDetails.user);
+			props.setProperty("password",decryptedPwd);
 			c = DriverManager.getConnection(url, props);
 			
-		} catch (Exception e) {
+		} catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+		catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName()+": "+e.getMessage());
 			System.exit(0);

@@ -15,8 +15,8 @@ public class Test {
 		try {
 			String url="http://localhost:8087/demorest/webapi/restmethod/getemails?limit=2&offset=2";
 			String name = "a@gmail.com";
-	        String password = "anitha";
-	        String authString = name + ":" + password;
+	        String password = "Neeraj@1231";
+	        String authString =  password;
 	        String authStringEnc = new BASE64Encoder().encode(authString.getBytes());
 	        System.out.println("Base64 encoded auth string: " + authStringEnc);
 	        Client restClient = Client.create();

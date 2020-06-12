@@ -21,7 +21,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.anitha.DAO.Email_DAO;
-import com.anitha.exception.DataNotFoundException;
 import com.anitha.exception.ServiceException;
 import com.anitha.model.Email;
 import com.anitha.model.JsonObj;
@@ -31,7 +30,7 @@ import com.anitha.util.ConnectionHelper;
 
 @Path("restmethod")
 public class RestMethod {
-	Email_DAO e=new Email_DAO();
+	Email_DAO emailDAO=new Email_DAO();
 	@GET
 	@Path("/getemails")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -40,14 +39,14 @@ public class RestMethod {
 			@QueryParam("offset") int offset) throws ServiceException 
 	{
 		String[] auth=Authentication.isUserAuthenticated(authString);
-		if(!e.findByUserId(auth[0],auth[1])) {
+		if(!emailDAO.findByUserId(auth[0],auth[1])) {
 			throw new ServiceException("user is not authorized : ", Status.UNAUTHORIZED.toString());
 			
 		}
-		List<Email> list = new ArrayList<Email>();
-		list=e.getAllEmailsPaginated(limit,offset);
+		List<Email> emailList = new ArrayList<Email>();
+		emailList=emailDAO.getAllEmailsPaginated(limit,offset);
 		
-		return list;
+		return emailList;
 	}
 	
 	
@@ -59,15 +58,14 @@ public class RestMethod {
 	String authString) throws ServiceException 
 	{
 		String[] list=Authentication.isUserAuthenticated(authString);
-		if(!e.findByUserId(list[0],list[1])) {
+		if(!emailDAO.findByUserId(list[0],list[1])) {
 			return "{\"error\":\"User not authenticated\"}";
 			
 		}
-		Email email=e.findById(id,list[0]);
+		Email email=emailDAO.findById(id,list[0]);
 		if(email==null)
 			throw new ServiceException("email id Not Found : " + id, Status.NOT_FOUND.toString());
 		return email;
-		//return Response.status(200).entity(msg).build();
 	}
 	
 	@GET
@@ -76,38 +74,47 @@ public class RestMethod {
 	public List<Email> getEmail(@HeaderParam("authorization") String authString) throws ServiceException 
 	{
 		String[] auth=Authentication.isUserAuthenticated(authString);
-		if(!e.findByUserId(auth[0],auth[1])) {
+		if(!emailDAO.findByUserId(auth[0],auth[1])) {
 			throw new ServiceException("user is not authorized : ", Status.UNAUTHORIZED.toString());
 			
 		}
-		List<Email> list = new ArrayList<Email>();
-		list=e.findAll(auth[0]);
+		List<Email> emailList = new ArrayList<Email>();
+		emailList=emailDAO.findAll(auth[0]);
 		
-		return list;
+		return emailList;
 	}
 	
 	
 	@POST
-	@Path("/post")
+	@Path("/postsender")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void example(Sender sender) throws ServiceException 
 	{
 		if(sender.getUserId().isEmpty() || sender.getUserId()==null) {
 			throw new ServiceException("id should not be empty or null", Status.BAD_REQUEST.toString());
 		}
-		e.saveUser(sender);
+		emailDAO.saveUser(sender);
 		
 	}
 	@POST
 	@Path("/postemail")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response createEmail(JsonObj json) 
+	public Response createEmail(JsonObj json) throws ServiceException 
 	{
-		int id=e.create(json.getEmail());
+		Sender sender=json.getSender();
+		Email email=json.getEmail();
+		if(!emailDAO.findByUserId(sender.getUserId(),sender.getPassword())) {
+			throw new ServiceException("user is not authorized : ", Status.UNAUTHORIZED.toString());
+			
+		}
+		if(email.getTo_address().isEmpty() || email.getTo_address()==null) {
+			throw new ServiceException("to_address should not be empty or null", Status.BAD_REQUEST.toString());
+		}
+		int id=emailDAO.create(email,sender.getUserId());
 		String result = "email saved with id: " +id;
 		SendEmailService service=new SendEmailService();
-		boolean flag=service.sent(json.getEmail(),json.getSender().getUserId(),json.getSender().getPassword());
-		e.update(id,flag);
+		boolean flag=service.sent(json.getEmail(),json.getSender());
+		emailDAO.update(id,flag);
 		return Response.status(201).entity(result).build();
 	}
 	

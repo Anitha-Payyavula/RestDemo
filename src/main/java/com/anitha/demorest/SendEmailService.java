@@ -1,5 +1,7 @@
 package com.anitha.demorest;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -14,30 +16,29 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.anitha.model.Email;
+import com.anitha.model.Sender;
+import com.anitha.util.Authentication;
+import com.anitha.util.DbConnectionDetails;
+
+import sun.misc.BASE64Decoder;
 
 public class SendEmailService {
 	
-	public  boolean sent(Email email,final String userId,final String pwd) {
-		
-	    Properties props = new Properties();  
-	    props.setProperty("mail.transport.protocol", "smtp");     
-	    props.setProperty("mail.host", "smtp.gmail.com");  
-	    props.put("mail.smtp.auth", "true");  
-	    props.put("mail.smtp.port", "465");  
-	    props.put("mail.debug", "true");  
-	    props.put("mail.smtp.socketFactory.port", "465");  
-	    props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");  
-	    props.put("mail.smtp.socketFactory.fallback", "false");  
+	public  boolean sent(Email email,final Sender sender) {
+		try {
+		final String decryptedPwd = Authentication.decrypt(sender.getPassword());
+		FileInputStream input = new FileInputStream( "C:\\Users\\vijay\\eclipse-workspace\\demorest\\props\\server.props" );
+		Properties props = new Properties();
+		props.load(input);
 	    Session session = Session.getDefaultInstance(props,  
 	    new javax.mail.Authenticator() {
 	       protected PasswordAuthentication getPasswordAuthentication() {  
-	       return new PasswordAuthentication(userId,pwd);  
+	       return new PasswordAuthentication(sender.getUserId(),decryptedPwd);  
 	   }  
 	   });
-	    try {
-	   //session.setDebug(true);  
+	      
 	   Transport transport = session.getTransport();  
-	   InternetAddress addressFrom = new InternetAddress(userId); 
+	   InternetAddress addressFrom = new InternetAddress(sender.getUserId()); 
 	   
 	    MimeMessage message = new MimeMessage(session);  
 		message.setSender(addressFrom);
@@ -58,5 +59,6 @@ public class SendEmailService {
 	    }
 	   
 	}
+	
 
 }
