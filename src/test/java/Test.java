@@ -3,6 +3,7 @@
 
 
 
+import com.anitha.util.Authentication;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -14,11 +15,11 @@ public class Test {
 	public static void main(String[] args) {
 		try {
 			String url="http://localhost:8087/demorest/webapi/restmethod/getemails?limit=2&offset=2";
-			String name = "a@gmail.com";
-	        String password = "Neeraj@1231";
-	        String authString =  password;
-	        String authStringEnc = new BASE64Encoder().encode(authString.getBytes());
-	        System.out.println("Base64 encoded auth string: " + authStringEnc);
+			String name = "anitha.payyavula97@gmail.com";
+	        String password = "fhA9vNeE2VHylB98NAVpGw==";
+	        String authString = name + ":" + password;
+	        authString=Authentication.encrypt(authString);
+	        System.out.println("Base64 encoded auth string: " + authString);
 	        Client restClient = Client.create();
 	        WebResource webResource = restClient.resource(url);
 
@@ -28,7 +29,7 @@ public class Test {
 					.resource("http://localhost:8087/demorest/webapi/restmethod/getemail/15");
 */
 	        ClientResponse response = webResource.accept("application/json")
-                    .header("Authorization", "Basic " + authStringEnc)
+                    .header("Authorization", "Basic " + authString)
                     .get(ClientResponse.class);
 
 			if (response.getStatus() != 200) {

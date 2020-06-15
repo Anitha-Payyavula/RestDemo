@@ -44,7 +44,7 @@ public class RestMethod {
 			
 		}
 		List<Email> emailList = new ArrayList<Email>();
-		emailList=emailDAO.getAllEmailsPaginated(limit,offset);
+		emailList=emailDAO.getAllEmailsPaginated(limit,offset,auth[0]);
 		
 		return emailList;
 	}
@@ -109,6 +109,10 @@ public class RestMethod {
 		}
 		if(email.getTo_address().isEmpty() || email.getTo_address()==null) {
 			throw new ServiceException("to_address should not be empty or null", Status.BAD_REQUEST.toString());
+		}
+		if(!emailDAO.findByUserId(sender.getUserId(),sender.getPassword())) {
+			throw new ServiceException("user is not authorized : ", Status.UNAUTHORIZED.toString());
+			
 		}
 		int id=emailDAO.create(email,sender.getUserId());
 		String result = "email saved with id: " +id;

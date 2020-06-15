@@ -108,6 +108,9 @@ public class Email_DAO {
          catch(Exception e1) {
          	System.out.println(e1);
          }
+        finally {
+ 			conHelper.close();
+ 		}
          return id;
 
     }
@@ -133,7 +136,10 @@ public class Email_DAO {
         }
         catch(Exception e1) {
         	System.out.println(e1);
-        }
+       
+		} finally {
+			conHelper.close();
+		}
 
    }
 
@@ -181,7 +187,10 @@ public class Email_DAO {
         }
         catch(Exception e1) {
         	System.out.println(e1);
-        }
+       
+		} finally {
+			conHelper.close();
+		}
       
 	}
 	public Boolean findByUserId(String id, String pwd) {
@@ -208,17 +217,21 @@ public class Email_DAO {
         return false;
         
     }
-	public List<Email> getAllEmailsPaginated(int limit, int offset) {
+	public List<Email> getAllEmailsPaginated(int limit, int offset, String userId) {
 		
-		String sql = "select * from email order by created_at limit "+ limit +" offset "+ offset;
+		
+		String sql = "select * from email where userid=? order by created_at desc limit "+ limit +" offset "+ offset;
     	Email email = null;
         Connection connection = null;
         List<Email> list=new ArrayList<>();
         try {
         	connection = conHelper.connectToPostgres();
-            Statement ps=connection.createStatement();
-            ResultSet rs = ps.executeQuery(sql);
-            if (rs.next()) {
+        	PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, userId);
+          
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
             	email=processRow(rs);
 				list.add(email);
             }

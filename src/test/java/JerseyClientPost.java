@@ -33,8 +33,9 @@ public class JerseyClientPost {
 			email.put("body", "Hello...");
 			
 			JSONObject sender = new JSONObject();
+		
 			sender.put("userId", "anitha.payyavula97@gmail.com");
-			sender.put("password", "TmVlcmFqQDEyMzE=");
+			sender.put("password", "fhA9vNeE2VHylB98NAVpGw==");
 		      
 			json.put("email", email);
 			json.put("sender", sender);
