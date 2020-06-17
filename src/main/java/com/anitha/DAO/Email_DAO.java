@@ -199,11 +199,11 @@ public class Email_DAO {
         Connection connection = null;
         
         try {
-    		String decryptedPwd = Authentication.decrypt(pwd);
+    		//String decryptedPwd = Authentication.decrypt(pwd);
         	connection = conHelper.connectToPostgres();
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, id);
-            ps.setString(2, decryptedPwd);
+            ps.setString(2, pwd);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
             	return true;

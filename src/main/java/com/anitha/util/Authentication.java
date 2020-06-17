@@ -26,9 +26,7 @@ public class Authentication {
         String decodedAuth = "";
         String[] authParts = authString.split("\\s+");
         String authInfo = authParts[1];
-        String decStr = null;
-        decStr = decrypt(authInfo);
-        String[] list=decStr.split(":");
+        String[] list=authInfo.split(":");
         return list;
          
          
@@ -80,7 +78,7 @@ public class Authentication {
 	    String originalString = "Neeraj@1231";
 	    String name = "anitha@gmail.com";
         String password = "Neeraj@1231";
-        String authString = "anitha";
+        String authString = "anitha.payyavula97@gmail.com";
 	     
 	    String encryptedString = Authentication.encrypt(authString) ;
 	    String decryptedString = Authentication.decrypt(encryptedString) ;

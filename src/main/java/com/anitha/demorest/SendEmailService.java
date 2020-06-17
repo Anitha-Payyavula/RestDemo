@@ -50,6 +50,7 @@ public class SendEmailService {
 	   
 	   Transport.send(message);
 	   transport.close();
+	   input.close();
 	   return true;
 		   
 	    }

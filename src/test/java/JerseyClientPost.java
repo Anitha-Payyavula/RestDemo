@@ -42,7 +42,7 @@ public class JerseyClientPost {
 			
 		     
 
-			for(int i=0;i<5;i++) {
+			for(int i=0;i<1;i++) {
 			ClientResponse response = webResource.type("application/json")
 					.post(ClientResponse.class, json);
 

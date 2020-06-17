@@ -13,11 +13,10 @@ public class JerseyClientGet {
 
 	public static void main(String[] args) {
 		try {
-			String url="http://localhost:8087/demorest/webapi/restmethod/getemail/25";
+			String url="http://localhost:8087/demorest/webapi/restmethod/getemail/2";
 			String name = "anitha.payyavula97@gmail.com";
 	        String password = "fhA9vNeE2VHylB98NAVpGw==";
 	        String authString = name + ":" + password;
-	        authString=Authentication.encrypt(authString);
 	       // String authStringEnc = new BASE64Encoder().encode(authString.getBytes());
 	        System.out.println("Base64 encoded auth string: " + authString);
 	        Client restClient = Client.create();
